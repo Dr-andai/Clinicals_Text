@@ -1,10 +1,9 @@
-#Clinical trials text analysis
-#set working directory
-setwd('C:/Users/Admin/Documents/PROJECTS/TEXT ANALYSIS/Clinical trials Tex/Clinicals_Text')
+# Clinical trials text analysis
+# set working directory
+# setwd('C:/Users/Admin/Documents/PROJECTS/TEXT ANALYSIS/Clinical trials Tex/Clinicals_Text')
 
 
-library(dplyr) # manipulating data
-library(tidyr) # create tidy data
+library(tidyr) # data management
 library(ggplot2) # data visualization
 library(wordcloud) # word clouds
 library("XML") # read xml files
@@ -32,6 +31,7 @@ class(clinicals$Date_registration)##'Date'
 # change column names to lower case
 names(clinicals)
 clinicals <- janitor::clean_names(clinicals)
+names(clinicals)
 
 #What to do?
 # General Objectives
@@ -61,7 +61,8 @@ fiveyears_conditions <- five_years[ , c('trial_id','years_a','condition','scient
 
 ## Data Cleaning
 # Look for missing values
-pct_miss(fiveyears_conditions$condition) ## 3.921569% of the data set don't have conditions
+pct_miss(fiveyears_conditions$condition) ## 3.767123% of the data set don't have conditions
+
 # drop na
 fiveyears_conditions$condition [fiveyears_conditions$condition ==""] <- NA
 fiveyears_conditions <- fiveyears_conditions %>%
@@ -71,6 +72,7 @@ fiveyears_conditions <- fiveyears_conditions %>%
 fiveyears_conditions <- unique( fiveyears_conditions[ , c('trial_id','years_a','condition','scientific_title') ] )
 
 fiveyears_conditions$condition <- tolower(fiveyears_conditions$condition)
+
 fiveyears_conditions$condition <- gsub("<br>","", fiveyears_conditions$condition)
 fiveyears_conditions$condition <- gsub(";\\s",";", fiveyears_conditions$condition)
 fiveyears_conditions$condition <- gsub("[.,;:-]"," ", fiveyears_conditions$condition)
@@ -133,7 +135,8 @@ corp_dfm <- dfm(corp)
 library("quanteda.textplots")
 col <- sapply(seq(0.1, 1, 0.1), function(x) adjustcolor("#0B2545", x))
 par(bg = "#98BAE3") # set background color
-textplot_wordcloud(corp_dfm, font="Helvetica 65 Medium", rotation = 0, color = col)
+textplot_wordcloud(corp_dfm, rotation = 0, color = col)
+## remember to alter font
 
 # How the distribution of Condition happened across the 5 years
 # 5 years data
@@ -154,6 +157,8 @@ ggplot(features_corpdfm, aes(feature, frequency))+
   theme_few()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1,size=17, face="bold"))
 
+
+
 # frequency plot of most occurring words each year
 top_words <- word_freq %>%
   group_by (group) %>%
@@ -172,6 +177,9 @@ ggplot(data = top_words, aes(x = feature, y = frequency)) +
 
 
 
+
+
+fiveyears_conditions[c(7,8),]
 
 
 
